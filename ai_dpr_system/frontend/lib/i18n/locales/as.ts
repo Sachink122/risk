@@ -1,0 +1,235 @@
+// Translations for Assamese
+export default {
+  // Landing page translations
+  'Ministry of Development of North Eastern Region': 'উত্তৰ-পূব অঞ্চল উন্নয়ন মন্ত্ৰালয়',
+  'Government of India': 'ভাৰত চৰকাৰ',
+  'Login': 'লগইন কৰক',
+  'Loading...': 'লোড হৈ আছে...',
+  'DPR-AI': 'ডিপিআৰ-এআই',
+  'AI-Powered DPR Risk Assessment': 'এআই-চালিত ডিপিআৰ বিপদাশঙ্কা মূল্যায়ন',
+  'Evaluate infrastructure project risks using advanced AI models for better planning and execution': 'উন্নত পৰিকল্পনা আৰু কাৰ্যান্বয়নৰ বাবে উন্নত এআই মডেলসমূহ ব্যৱহাৰ কৰি আন্তঃগাঁথনি প্ৰকল্পৰ বিপদাশঙ্কাসমূহ মূল্যায়ন কৰক',
+  'Get Started': 'আৰম্ভ কৰক',
+  'Key Features': 'মুখ্য বৈশিষ্ট্যসমূহ',
+  'AI Risk Analysis': 'এআই বিপদাশঙ্কা বিশ্লেষণ',
+  'Leverage machine learning to identify potential risks in infrastructure projects': 'আন্তঃগাঁথনি প্ৰকল্পসমূহত সম্ভাৱ্য বিপদাশঙ্কাসমূহ চিনাক্ত কৰিবলৈ মেচিন লাৰ্নিং ব্যৱহাৰ কৰক',
+  'Detailed Reports': 'বিস্তৃত প্ৰতিবেদনসমূহ',
+  'Generate comprehensive risk assessment reports with mitigation strategies': 'প্ৰশমন কৌশলসমূহৰ সৈতে ব্যাপক বিপদাশঙ্কা মূল্যায়ন প্ৰতিবেদনসমূহ সৃষ্টি কৰক',
+  'Multi-lingual Support': 'বহুভাষিক সমৰ্থন',
+  'Access the platform in English, Hindi, and Assamese languages': 'ইংৰাজী, হিন্দী, আৰু অসমীয়া ভাষাত প্লেটফৰ্মটো ব্যৱহাৰ কৰক',
+  'About': 'পৰিচয়',
+  'About Us': 'আমাৰ বিষয়ে',
+  'FAQs': 'সঘনে সোধা প্ৰশ্নসমূহ',
+  'User Manual': 'ব্যৱহাৰকাৰী নিৰ্দেশিকা',
+
+  common: {
+    appTitle: 'ৰিস্কগাৰ্ড এআই',
+    ministry: 'উত্তৰ-পূব অঞ্চল উন্নয়ন মন্ত্ৰালয়',
+    loading: 'লোড হৈ আছে...',
+    error: 'এটা ত্ৰুটি হৈছে',
+    success: 'সফলতা',
+    save: 'সংৰক্ষণ কৰক',
+    cancel: 'বাতিল কৰক',
+    delete: 'মচি পেলাওক',
+    edit: 'সম্পাদনা কৰক',
+    view: 'চাওক',
+    download: 'ডাউনলোড কৰক',
+    upload: 'আপলোড কৰক',
+    submit: 'দাখিল কৰক',
+    search: 'সন্ধান কৰক',
+    filter: 'ফিল্টাৰ কৰক',
+    sort: 'ক্ৰমবদ্ধ কৰক',
+    actions: 'কাৰ্য্যসমূহ',
+    yes: 'হয়',
+    no: 'নহয়',
+    print: 'প্ৰিণ্ট কৰক',
+    back: 'ঘূৰি যাওক',
+    next: 'পৰৱৰ্তী',
+    retry: 'পুনৰ চেষ্টা কৰক',
+    confirm: 'নিশ্চিত কৰক',
+    password: 'পাছৱৰ্ড',
+    confirmPassword: 'পাছৱৰ্ড নিশ্চিত কৰক',
+    fullName: 'সম্পূৰ্ণ নাম',
+    department: 'বিভাগ',
+    role: 'ভূমিকা',
+    rememberMe: 'মোক মনত ৰাখক',
+    forgotPassword: 'পাছৱৰ্ড পাহৰি গ\'লা?',
+    loginButton: 'ছাইন ইন কৰক',
+    registerButton: 'ছাইন আপ কৰক',
+    orContinueWith: 'অথবা ইয়াৰ সৈতে অব্যাহত ৰাখক',
+    loginSuccess: 'লগইন সফল হ\'ল',
+    loginError: 'লগইন বিফল হ\'ল। অনুগ্ৰহ কৰি আপোনাৰ ক্ৰেডেনচিয়েলসমূহ পৰীক্ষা কৰক।',
+    logoutSuccess: 'লগআউট সফল হ\'ল',
+  },
+  
+  // Navigation translations
+  nav: {
+    dashboard: 'ডেশ্বৰ্ড',
+    dprs: 'ডিপিআৰ',
+    upload: 'আপলোড',
+    reports: 'প্ৰতিবেদন',
+    risk: 'বিপদাশঙ্কা ভৱিষ্যবাণী',
+    settings: 'ছেটিংছ',
+    users: 'ব্যৱহাৰকাৰী পৰিচালনা',
+    logout: 'লগআউট',
+  },
+  
+  dashboard: {
+    title: 'ডেশ্বোৰ্ড',
+    totalDprs: 'মুঠ ডিপিআৰ',
+    evaluated: 'মূল্যায়ন কৰা হৈছে',
+    pending: 'বিচাৰাধীন',
+    highRisk: 'উচ্চ বিপদাশঙ্কা',
+    quickActions: 'দ্ৰুত কাৰ্য্যসমূহ',
+    uploadNew: 'নতুন ডিপিআৰ আপলোড কৰক',
+    viewAll: 'সকলো ডিপিআৰ চাওক',
+    viewReports: 'প্ৰতিবেদনসমূহ চাওক',
+    manageUsers: 'ব্যৱহাৰকাৰীসকল পৰিচালনা কৰক',
+    recentDprs: 'শেহতীয়া ডিপিআৰসমূহ',
+  },
+  
+  dpr: {
+    title: 'ডিপিআৰ পৰিচালনা',
+    list: 'ডিপিআৰ তালিকা',
+    details: 'ডিপিআৰ বিৱৰণ',
+    new: 'নতুন ডিপিআৰ',
+    upload: 'ডিপিআৰ আপলোড কৰক',
+    projectTitle: 'প্ৰকল্পৰ শিৰোনাম',
+    projectCode: 'প্ৰকল্প কোড',
+    department: 'বিভাগ',
+    location: 'অৱস্থান',
+    sector: 'খণ্ড',
+    estimatedCost: 'আনুমানিক খৰচ',
+    uploadDate: 'আপলোড তাৰিখ',
+    status: 'স্থিতি',
+    riskLevel: 'বিপদাশঙ্কা স্তৰ',
+    description: 'বিৱৰণ',
+    document: 'ডিপিআৰ নথিপত্ৰ',
+    searchPlaceholder: 'ডিপিআৰসমূহ সন্ধান কৰক...',
+    allStatus: 'সকলো স্থিতি',
+    allRiskLevels: 'সকলো বিপদাশঙ্কা স্তৰ',
+    noResults: 'আপোনাৰ সন্ধান মাপদণ্ডৰ সৈতে মিল থকা কোনো ডিপিআৰ পোৱা নগ\'ল।',
+    uploadInstruction: 'আপোনাৰ ডিপিআৰ নথিপত্ৰ আপলোড কৰক (পিডিএফ ফৰ্মেট)',
+    dropFiles: 'ফাইলসমূহ ইয়াত পেলাওক বা ব্ৰাউজ কৰিবলৈ ক্লিক কৰক',
+    uploadSuccess: 'ডিপিআৰ সফলতাৰে আপলোড কৰা হ\'ল',
+    uploadError: 'ডিপিআৰ আপলোড কৰাত ত্ৰুটি',
+  },
+  
+  evaluation: {
+    title: 'এআই মূল্যায়ন ফলাফল',
+    scores: 'মূল্যায়ন স্কোৰসমূহ',
+    comments: 'এআই মন্তব্যসমূহ',
+    completeness: 'সম্পূৰ্ণতা',
+    clarity: 'স্পষ্টতা',
+    feasibility: 'সম্ভাৱ্যতা',
+    budget: 'বাজেট',
+    timeline: 'সময়ৰেখা',
+    compliance: 'অনুপালন',
+    sustainability: 'চিৰস্থায়িত্ব',
+    overall: 'সামগ্ৰিক',
+    section: 'বিভাগ',
+    comment: 'মন্তব্য',
+    severity: 'তীব্ৰতা',
+    highPriority: 'উচ্চ অগ্ৰাধিকাৰ',
+    mediumPriority: 'মধ্যম অগ্ৰাধিকাৰ',
+    lowPriority: 'নিম্ন অগ্ৰাধিকাৰ',
+  },
+  
+  risk: {
+    title: 'বিপদাশঙ্কা বিশ্লেষণ',
+    overview: 'বিপদাশঙ্কা অৱলোকন',
+    detailed: 'বিস্তৃত বিপদাশঙ্কা বিশ্লেষণ',
+    summary: 'বিপদাশঙ্কা সাৰাংশ',
+    recommendations: 'মূখ্য পৰামৰ্শসমূহ',
+    score: 'বিপদাশঙ্কা স্কোৰ',
+    level: 'বিপদাশঙ্কা স্তৰ',
+    factors: 'বিপদাশঙ্কা কাৰকসমূহ',
+    category: 'শ্ৰেণী',
+    description: 'বিৱৰণ',
+    probability: 'সম্ভাৱনা',
+    impact: 'প্ৰভাৱ',
+    mitigation: 'পৰামৰ্শ দিয়া প্ৰশমন',
+    keyIndicators: 'মূখ্য সূচকসমূহ',
+    reportTitle: 'বিপদাশঙ্কা মূল্যায়ন প্ৰতিবেদন',
+    
+    // Advanced risk prediction
+    advanced: {
+      title: 'উন্নত বিপদাশংকা পূৰ্বানুমান',
+      description: 'ব্যাপক বিপদাশংকা মূল্যায়ন উৎপন্ন কৰিবলৈ বিস্তৃত প্ৰকল্পৰ পৰিমিতিসমূহ বিশ্লেষণ কৰক।',
+      projectInfo: 'প্ৰকল্পৰ তথ্য',
+      riskFactors: 'বিপদাশংকা কাৰকসমূহ',
+      riskAnalysis: 'বিপদাশংকা বিশ্লেষণ',
+      submit: 'বিপদাশংকা মূল্যায়ন উৎপন্ন কৰক',
+      reset: 'ফৰ্ম ৰিছেট কৰক',
+      
+      fields: {
+        name: 'প্ৰকল্পৰ নাম',
+        description: 'প্ৰকল্পৰ বিৱৰণ',
+        cost: 'আনুমানিক ব্যয় (লাখত)',
+        duration: 'প্ৰকল্পৰ সময়কাল (মাহত)',
+        location: 'প্ৰকল্পৰ অৱস্থান',
+        type: 'প্ৰকল্পৰ ধৰণ',
+        terrain: 'ভূমি জটিলতা',
+        weather: 'বতৰৰ অৱস্থা',
+        laborAvailability: 'শ্ৰমিক উপলব্ধতা',
+        materialAccess: 'সামগ্ৰী প্ৰাপ্যতা',
+        infrastructureStatus: 'আন্তঃগাঁথনিৰ স্থিতি'
+      },
+      
+      options: {
+        projectType: {
+          road: 'ৰাস্তা নিৰ্মাণ',
+          bridge: 'দলং',
+          building: 'ভৱন',
+          water: 'জল পৰিচালনা',
+          other: 'অন্যান্য'
+        },
+        terrain: {
+          flat: 'সমতল/সহজ',
+          moderate: 'মধ্যম',
+          difficult: 'কঠিন',
+          extreme: 'অত্যধিক/পাহাৰীয়া'
+        },
+        weather: {
+          mild: 'মৃদু',
+          moderate: 'মধ্যম',
+          harsh: 'কঠোৰ',
+          extreme: 'অত্যধিক'
+        },
+        availability: {
+          abundant: 'প্ৰচুৰ',
+          adequate: 'পৰ্যাপ্ত',
+          limited: 'সীমিত',
+          scarce: 'দুষ্প্ৰাপ্য'
+        },
+        infrastructure: {
+          excellent: 'উৎকৃষ্ট',
+          good: 'ভাল',
+          fair: 'মধ্যম',
+          poor: 'দুৰ্বল'
+        }
+      },
+      
+      results: {
+        title: 'বিপদাশংকা মূল্যায়ন ফলাফল',
+        overallRisk: 'সামগ্ৰিক বিপদাশংকা স্তৰ',
+        breakdown: 'বিপদাশংকা বিশ্লেষণ',
+        mitigations: 'পৰামৰ্শ দিয়া প্ৰশমন উপায়সমূহ',
+        comparison: 'তুলনামূলক বিশ্লেষণ',
+        exportReport: 'প্ৰতিবেদন ৰপ্তানি কৰক',
+        factors: {
+          time: 'সময় বিপদাশংকা',
+          cost: 'মূল্য বিপদাশংকা',
+          quality: 'মান বিপদাশংকা',
+          environmental: 'পৰিৱেশ বিপদাশংকা',
+          social: 'সামাজিক বিপদাশংকা'
+        },
+        levels: {
+          low: 'নিম্ন',
+          medium: 'মধ্যম',
+          high: 'উচ্চ',
+          critical: 'গুৰুতৰ'
+        }
+      }
+    }
+  }
+};

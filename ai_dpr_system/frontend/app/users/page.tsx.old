@@ -1,0 +1,286 @@
+'use client';
+
+import React, { useState } from 'react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { 
+  Table, 
+  TableBody, 
+  TableCell, 
+  TableHead, 
+  TableHeader, 
+  TableRow 
+} from '@/components/ui/table'
+import { Input } from '@/components/ui/input'
+import { useToast } from '@/components/ui/use-toast'
+import { 
+  Select, 
+  SelectContent, 
+  SelectItem, 
+  SelectTrigger, 
+  SelectValue 
+} from '@/components/ui/select'
+import { Label } from '@/components/ui/label'
+
+// Define interface for user data
+interface User {
+  id: number;
+  name: string;
+  email: string;
+  department: string;
+  role: string;
+  status: 'Active' | 'Inactive';
+}
+
+// Sample user data - would come from API in production
+const mockUsers: User[] = [
+  { id: 1, name: 'John Doe', email: 'john@example.gov.in', department: 'IT', role: 'Admin', status: 'Active' },
+  { id: 2, name: 'Jane Smith', email: 'jane@example.gov.in', department: 'Finance', role: 'Reviewer', status: 'Active' },
+  { id: 3, name: 'Robert Brown', email: 'robert@example.gov.in', department: 'Planning', role: 'Standard User', status: 'Active' },
+  { id: 4, name: 'Sarah Wilson', email: 'sarah@example.gov.in', department: 'Infrastructure', role: 'Read-Only', status: 'Inactive' },
+  { id: 5, name: 'Amit Patel', email: 'amit@example.gov.in', department: 'Transportation', role: 'Reviewer', status: 'Active' },
+];
+
+// New user form data interface
+interface NewUserForm {
+  name: string;
+  email: string;
+  department: string;
+  role: string;
+}
+
+export default function UsersPage() {
+  const [users, setUsers] = useState<User[]>(mockUsers);
+  const [searchTerm, setSearchTerm] = useState<string>('');
+  const [isAddUserOpen, setIsAddUserOpen] = useState<boolean>(false);
+  const [newUser, setNewUser] = useState<NewUserForm>({
+    name: '',
+    email: '',
+    department: '',
+    role: '',
+  });
+  
+  const { toast } = useToast();
+  
+  // Filter users based on search term
+  const filteredUsers = users.filter(user => 
+    user.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
+    user.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    user.department.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    user.role.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+  
+  const handleAddUser = () => {
+    // Validate form
+    if (!newUser.name || !newUser.email || !newUser.department || !newUser.role) {
+      toast({
+        title: "Error",
+        description: "All fields are required",
+        variant: "destructive"
+      });
+      return;
+    }
+    
+    // Add new user
+    const id = users.length > 0 ? Math.max(...users.map(user => user.id)) + 1 : 1;
+    const updatedUsers = [...users, { 
+      ...newUser, 
+      id, 
+      status: 'Active' 
+    }];
+    
+    setUsers(updatedUsers);
+    setIsAddUserOpen(false);
+    
+    // Reset form
+    setNewUser({
+      name: '',
+      email: '',
+      department: '',
+      role: '',
+    });
+    
+    toast({
+      title: "Success",
+      description: "User added successfully",
+    });
+  };
+  
+  const handleToggleStatus = (id: number): void => {
+    const updatedUsers = users.map(user => 
+      user.id === id 
+        ? { ...user, status: user.status === 'Active' ? 'Inactive' : 'Active' } 
+        : user
+    );
+    setUsers(updatedUsers);
+    
+    const targetUser = users.find(user => user.id === id);
+    if (!targetUser) return; // Add safety check
+    const newStatus = targetUser.status === 'Active' ? 'Inactive' : 'Active';
+    
+    toast({
+      title: "Success",
+      description: `User ${targetUser.name} is now ${newStatus}`,
+    });
+  };
+  
+  return (
+    <div className="container mx-auto px-4 py-8">
+      <Card>
+        <CardHeader className="flex flex-row items-center justify-between">
+          <CardTitle>User Management</CardTitle>
+          <Button onClick={() => setIsAddUserOpen(!isAddUserOpen)}>
+            {isAddUserOpen ? 'Cancel' : 'Add User'}
+          </Button>
+        </CardHeader>
+        <CardContent>
+          {isAddUserOpen && (
+            <Card className="mb-6 border-dashed border-2 border-gray-300">
+              <CardHeader>
+                <CardTitle>Add New User</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="grid gap-4 py-2">
+                  <div className="grid grid-cols-1 md:grid-cols-4 items-center gap-2">
+                    <Label htmlFor="name" className="md:text-right">
+                      Name
+                    </Label>
+                    <Input
+                      id="name"
+                      value={newUser.name}
+                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => setNewUser({...newUser, name: e.target.value})}
+                      className="md:col-span-3"
+                    />
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-4 items-center gap-2">
+                    <Label htmlFor="email" className="md:text-right">
+                      Email
+                    </Label>
+                    <Input
+                      id="email"
+                      type="email"
+                      value={newUser.email}
+                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => setNewUser({...newUser, email: e.target.value})}
+                      className="md:col-span-3"
+                    />
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-4 items-center gap-2">
+                    <Label htmlFor="department" className="md:text-right">
+                      Department
+                    </Label>
+                    <div className="md:col-span-3">
+                      <Select
+                        value={newUser.department}
+                        onValueChange={(value) => setNewUser({...newUser, department: value})}
+                      >
+                        <SelectTrigger className="w-full">
+                          <SelectValue placeholder="Select department" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="IT">IT</SelectItem>
+                          <SelectItem value="Finance">Finance</SelectItem>
+                          <SelectItem value="Planning">Planning</SelectItem>
+                          <SelectItem value="Infrastructure">Infrastructure</SelectItem>
+                          <SelectItem value="Transportation">Transportation</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-4 items-center gap-2">
+                    <Label htmlFor="role" className="md:text-right">
+                      Role
+                    </Label>
+                    <div className="md:col-span-3">
+                      <Select
+                        value={newUser.role}
+                        onValueChange={(value) => setNewUser({...newUser, role: value})}
+                      >
+                        <SelectTrigger className="w-full">
+                          <SelectValue placeholder="Select role" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="Admin">Administrator</SelectItem>
+                          <SelectItem value="Reviewer">Reviewer</SelectItem>
+                          <SelectItem value="Standard User">Standard User</SelectItem>
+                          <SelectItem value="Read-Only">Read-Only User</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </div>
+                  <div className="flex justify-end mt-4 space-x-2">
+                    <Button variant="outline" onClick={() => setIsAddUserOpen(false)}>
+                      Cancel
+                    </Button>
+                    <Button onClick={handleAddUser}>Add User</Button>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          )}
+          
+          <div className="mb-4">
+            <Input
+              placeholder="Search users..."
+              value={searchTerm}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSearchTerm(e.target.value)}
+              className="max-w-sm"
+            />
+          </div>
+          <div className="rounded-md border">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Name</TableHead>
+                  <TableHead>Email</TableHead>
+                  <TableHead>Department</TableHead>
+                  <TableHead>Role</TableHead>
+                  <TableHead>Status</TableHead>
+                  <TableHead className="text-right">Actions</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {filteredUsers.length > 0 ? (
+                  filteredUsers.map((user) => (
+                    <TableRow key={user.id}>
+                      <TableCell>{user.name}</TableCell>
+                      <TableCell>{user.email}</TableCell>
+                      <TableCell>{user.department}</TableCell>
+                      <TableCell>{user.role}</TableCell>
+                      <TableCell>
+                        <span className={`inline-flex items-center rounded-full px-2 py-1 text-xs font-medium ${
+                          user.status === 'Active' 
+                            ? 'bg-green-50 text-green-700 ring-1 ring-inset ring-green-600/20' 
+                            : 'bg-red-50 text-red-700 ring-1 ring-inset ring-red-600/20'
+                        }`}>
+                          {user.status}
+                        </span>
+                      </TableCell>
+                      <TableCell className="text-right">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => handleToggleStatus(user.id)}
+                        >
+                          {user.status === 'Active' ? 'Deactivate' : 'Activate'}
+                        </Button>
+                      </TableCell>
+                    </TableRow>
+                  ))
+                ) : (
+                  <TableRow>
+                    <TableCell colSpan={6} className="text-center py-4">
+                      No users found
+                    </TableCell>
+                  </TableRow>
+                )}
+              </TableBody>
+            </Table>
+          </div>
+          <div className="mt-4 text-sm text-gray-500 dark:text-gray-400">
+            Showing {filteredUsers.length} of {users.length} users
+          </div>
+        </CardContent>
+      </Card>
+    </div>
+  );
+}

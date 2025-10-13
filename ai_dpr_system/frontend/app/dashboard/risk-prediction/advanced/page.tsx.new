@@ -1,0 +1,556 @@
+'use client'
+
+import { useState } from 'react'
+import { useForm } from 'react-hook-form'
+import { z } from 'zod'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { useTranslation } from 'react-i18next'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { 
+  Select, 
+  SelectContent, 
+  SelectItem, 
+  SelectTrigger, 
+  SelectValue 
+} from '@/components/ui/select'
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
+import { Textarea } from '@/components/ui/textarea'
+import { useToast } from '@/components/ui/use-toast'
+import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
+import { 
+  RiskIndicator, 
+  RiskFactorCard, 
+  RiskMitigationItem, 
+  ComparativeRisk 
+} from '@/components/risk/risk-indicators'
+import { useRiskPredictionTranslations } from '@/components/risk/risk-prediction-translations'
+
+const useFormSchema = () => {
+  const { t } = useTranslation()
+  
+  return z.object({
+    name: z.string().min(3, { message: t('risk.advanced.validation.nameRequired', 'Project name is required') }),
+    description: z.string().min(10, { message: t('risk.advanced.validation.descriptionRequired', 'Please provide a more detailed description') }),
+    cost: z.string().min(1, { message: t('risk.advanced.validation.costRequired', 'Project cost is required') }),
+    duration: z.string().min(1, { message: t('risk.advanced.validation.durationRequired', 'Project duration is required') }),
+    location: z.string().min(2, { message: t('risk.advanced.validation.locationRequired', 'Project location is required') }),
+    type: z.string().min(1, { message: t('risk.advanced.validation.typeRequired', 'Project type is required') }),
+    terrain: z.string().min(1, { message: t('risk.advanced.validation.terrainRequired', 'Terrain complexity is required') }),
+    weather: z.string().min(1, { message: t('risk.advanced.validation.weatherRequired', 'Weather conditions are required') }),
+    laborAvailability: z.string().min(1, { message: t('risk.advanced.validation.laborRequired', 'Labor availability is required') }),
+    materialAccess: z.string().min(1, { message: t('risk.advanced.validation.materialRequired', 'Material access is required') }),
+    infrastructureStatus: z.string().min(1, { message: t('risk.advanced.validation.infrastructureRequired', 'Infrastructure status is required') }),
+  })
+};
+
+export default function AdvancedRiskPrediction() {
+  const { t } = useTranslation()
+  const translations = useRiskPredictionTranslations()
+  const { toast } = useToast()
+  const [isLoading, setIsLoading] = useState(false)
+  const [riskAssessment, setRiskAssessment] = useState<any>(null)
+  
+  const projectSchema = useFormSchema()
+  type ProjectFormData = z.infer<typeof projectSchema>
+  
+  const { register, handleSubmit, formState: { errors }, setValue, watch } = useForm<ProjectFormData>({
+    resolver: zodResolver(projectSchema),
+    defaultValues: {
+      name: '',
+      description: '',
+      cost: '',
+      duration: '',
+      location: '',
+      type: 'road',
+      terrain: 'medium',
+      weather: 'moderate',
+      laborAvailability: 'adequate',
+      materialAccess: 'moderate',
+      infrastructureStatus: 'fair',
+    },
+  })
+  
+  const onSubmit = async (data: ProjectFormData) => {
+    setIsLoading(true)
+    
+    try {
+      // Simulate API call
+      await new Promise((resolve) => setTimeout(resolve, 2000))
+      
+      // Create mock assessment results
+      const mockRiskFactors = [
+        { 
+          name: t('risk.advanced.factors.terrain', 'Terrain Risk'), 
+          score: data.terrain === 'high' ? 85 : data.terrain === 'medium' ? 55 : 25,
+          impact: t('risk.advanced.impacts.terrain', 'High terrain complexity increases construction challenges and costs.'),
+          mitigation: t('risk.advanced.mitigations.terrain', 'Conduct detailed geological surveys and adjust construction methods accordingly.')
+        },
+        { 
+          name: t('risk.advanced.factors.weather', 'Weather Risk'), 
+          score: data.weather === 'extreme' ? 90 : data.weather === 'moderate' ? 60 : 35,
+          impact: t('risk.advanced.impacts.weather', 'Extreme weather patterns can cause significant delays and damage.'),
+          mitigation: t('risk.advanced.mitigations.weather', 'Implement weather monitoring systems and plan for seasonal work schedules.')
+        },
+        { 
+          name: t('risk.advanced.factors.financial', 'Financial Risk'), 
+          score: parseInt(data.cost) > 10000 ? 75 : parseInt(data.cost) > 5000 ? 60 : 40,
+          impact: t('risk.advanced.impacts.financial', 'Higher project costs increase the risk of financial shortfalls and overruns.'),
+          mitigation: t('risk.advanced.mitigations.financial', 'Maintain contingency funds of at least 15% and implement strict budget monitoring.')
+        },
+        { 
+          name: t('risk.advanced.factors.schedule', 'Schedule Risk'), 
+          score: parseInt(data.duration) > 36 ? 70 : parseInt(data.duration) > 24 ? 50 : 30,
+          impact: t('risk.advanced.impacts.schedule', 'Longer project durations increase exposure to market changes and delays.'),
+          mitigation: t('risk.advanced.mitigations.schedule', 'Implement aggressive project tracking with clear milestones and buffer periods.')
+        },
+        { 
+          name: t('risk.advanced.factors.resource', 'Resource Risk'), 
+          score: data.laborAvailability === 'scarce' ? 80 : data.laborAvailability === 'adequate' ? 50 : 20,
+          impact: t('risk.advanced.impacts.resource', 'Limited labor availability can lead to delays and higher labor costs.'),
+          mitigation: t('risk.advanced.mitigations.resource', 'Develop early recruitment strategies and consider skills training programs.')
+        },
+        { 
+          name: t('risk.advanced.factors.supply', 'Supply Chain Risk'), 
+          score: data.materialAccess === 'difficult' ? 85 : data.materialAccess === 'moderate' ? 55 : 25,
+          impact: t('risk.advanced.impacts.supply', 'Material procurement challenges can cause delays and cost overruns.'),
+          mitigation: t('risk.advanced.mitigations.supply', 'Secure material sources in advance and maintain alternative suppliers.')
+        }
+      ]
+      
+      // Calculate overall risk score (weighted average)
+      const overallScore = Math.round(
+        mockRiskFactors.reduce((sum, factor) => sum + factor.score, 0) / mockRiskFactors.length
+      )
+      
+      const mockSimilarProjects = [
+        { name: t('risk.advanced.similarProjects.nh44', 'NH-44 Extension'), score: 62 },
+        { name: t('risk.advanced.similarProjects.brahmaputra', 'Brahmaputra Bridge'), score: 78 },
+        { name: t('risk.advanced.similarProjects.guwahati', 'Guwahati Bypass'), score: 45 },
+        { name: t('risk.advanced.similarProjects.connector', 'Assam-Arunachal Connector'), score: 67 },
+        { name: t('risk.advanced.similarProjects.dibrugarh', 'Dibrugarh Highway'), score: 38 },
+      ]
+      
+      const mockMitigationStrategies = [
+        {
+          title: t('risk.advanced.strategyCategories.planning', 'Project Planning & Management'),
+          actions: [
+            t('risk.advanced.strategies.planning.monitoring', 'Implement robust project monitoring with weekly status updates'),
+            t('risk.advanced.strategies.planning.riskRegister', 'Develop detailed risk register with regular reviews'),
+            t('risk.advanced.strategies.planning.communication', 'Establish clear communication protocols with all stakeholders')
+          ]
+        },
+        {
+          title: t('risk.advanced.strategyCategories.financial', 'Financial Management'),
+          actions: [
+            t('risk.advanced.strategies.financial.contingency', 'Allocate 15-20% contingency based on risk profile'),
+            t('risk.advanced.strategies.financial.funding', 'Implement staged funding release tied to milestone completion'),
+            t('risk.advanced.strategies.financial.reviews', 'Conduct monthly financial reviews with variance analysis')
+          ]
+        },
+        {
+          title: t('risk.advanced.strategyCategories.resource', 'Resource Management'),
+          actions: [
+            t('risk.advanced.strategies.resource.supplies', 'Secure key material supplies with long-term contracts'),
+            t('risk.advanced.strategies.resource.workforce', 'Develop local workforce training programs'),
+            t('risk.advanced.strategies.resource.tracking', 'Implement resource utilization tracking systems')
+          ]
+        },
+        {
+          title: t('risk.advanced.strategyCategories.technical', 'Technical Approach'),
+          actions: [
+            t('risk.advanced.strategies.technical.surveys', 'Conduct additional geological surveys in high-risk terrain areas'),
+            t('risk.advanced.strategies.technical.weatherproofing', 'Implement weatherproofing techniques for vulnerable structures'),
+            t('risk.advanced.strategies.technical.modular', 'Use modular construction methods where appropriate to reduce on-site time')
+          ]
+        }
+      ]
+      
+      setRiskAssessment({
+        projectName: data.name,
+        overallScore,
+        factors: mockRiskFactors,
+        similarProjects: mockSimilarProjects,
+        mitigationStrategies: mockMitigationStrategies
+      })
+      
+      toast({
+        title: t('risk.advanced.toast.success.title', 'Risk Assessment Complete'),
+        description: t('risk.advanced.toast.success.description', 'Project risk analysis has been successfully completed.'),
+      })
+    } catch (error) {
+      toast({
+        variant: 'destructive',
+        title: t('risk.advanced.toast.error.title', 'Analysis Failed'),
+        description: t('risk.advanced.toast.error.description', 'Could not complete the risk analysis. Please try again.'),
+      })
+    } finally {
+      setIsLoading(false)
+    }
+  }
+  
+  return (
+    <div className="w-full bg-white">
+      {/* Government style header with emblem */}
+      <div className="bg-gradient-to-r from-blue-900 to-blue-800 text-white py-6 px-4 md:px-6 shadow-md">
+        <div className="container mx-auto flex flex-col md:flex-row items-center justify-between">
+          <div className="flex items-center space-x-4 mb-4 md:mb-0">
+            <div className="h-16 w-16 relative flex-shrink-0">
+              <div className="absolute inset-0 bg-contain bg-center bg-no-repeat" 
+                   style={{ backgroundImage: "url('https://upload.wikimedia.org/wikipedia/commons/5/55/Emblem_of_India.svg')" }}>
+              </div>
+            </div>
+            <div>
+              <h1 className="text-2xl md:text-3xl font-bold leading-tight">{t('risk.advanced.pageTitle', 'Advanced Project Risk Prediction')}</h1>
+              <p className="text-sm md:text-base opacity-90">
+                {t('common.ministry', 'Ministry of Development of North Eastern Region')}
+              </p>
+            </div>
+          </div>
+          <div className="bg-white/10 py-2 px-4 rounded-lg backdrop-blur-sm">
+            <p className="text-sm font-medium">
+              {t('risk.advanced.pageDescription', 'Analyze potential risks in infrastructure projects using AI-driven assessment')}
+            </p>
+          </div>
+        </div>
+      </div>
+      
+      <div className="container mx-auto py-8 px-4 md:px-6">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-8">
+          <div className="space-y-6">
+            <Card className="border-t-4 border-orange-500 shadow-md hover:shadow-lg transition-shadow">
+              <CardHeader className="bg-gray-50">
+                <div className="flex items-center gap-2 mb-2">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-blue-800"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path></svg>
+                  <CardTitle className="text-blue-900">{translations.form.projectInfo}</CardTitle>
+                </div>
+                <CardDescription>{t('risk.advanced.projectInfoDesc', 'Enter comprehensive project information for accurate risk analysis')}</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <form id="risk-form" onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="name">{translations.form.fields.name}</Label>
+                    <Input
+                      id="name"
+                      placeholder={t('risk.advanced.placeholders.name', 'e.g. NH-37 Road Expansion')}
+                      {...register('name')}
+                    />
+                    {errors.name && (
+                      <p className="text-sm text-red-500">{errors.name.message}</p>
+                    )}
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <Label htmlFor="description">{translations.form.fields.description}</Label>
+                    <Textarea
+                      id="description"
+                      placeholder={t('risk.advanced.placeholders.description', 'Detailed project description...')}
+                      className="min-h-[100px]"
+                      {...register('description')}
+                    />
+                    {errors.description && (
+                      <p className="text-sm text-red-500">{errors.description.message}</p>
+                    )}
+                  </div>
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="cost">{translations.form.fields.cost}</Label>
+                      <Input
+                        id="cost"
+                        placeholder={t('risk.advanced.placeholders.cost', 'in lakhs')}
+                        {...register('cost')}
+                      />
+                      {errors.cost && (
+                        <p className="text-sm text-red-500">{errors.cost.message}</p>
+                      )}
+                    </div>
+                    
+                    <div className="space-y-2">
+                      <Label htmlFor="duration">{translations.form.fields.duration}</Label>
+                      <Input
+                        id="duration"
+                        placeholder={t('risk.advanced.placeholders.duration', 'in months')}
+                        {...register('duration')}
+                      />
+                      {errors.duration && (
+                        <p className="text-sm text-red-500">{errors.duration.message}</p>
+                      )}
+                    </div>
+                  </div>
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="location">{translations.form.fields.location}</Label>
+                      <Input
+                        id="location"
+                        placeholder={t('risk.advanced.placeholders.location', 'e.g. Guwahati')}
+                        {...register('location')}
+                      />
+                      {errors.location && (
+                        <p className="text-sm text-red-500">{errors.location.message}</p>
+                      )}
+                    </div>
+                    
+                    <div className="space-y-2">
+                      <Label htmlFor="type">{translations.form.fields.type}</Label>
+                      <Select defaultValue="road" {...register('type')}>
+                        <SelectTrigger>
+                          <SelectValue placeholder={t('risk.advanced.placeholders.type', 'Select project type')} />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="road">{t('risk.advanced.options.type.road', 'Road')}</SelectItem>
+                          <SelectItem value="bridge">{t('risk.advanced.options.type.bridge', 'Bridge')}</SelectItem>
+                          <SelectItem value="building">{t('risk.advanced.options.type.building', 'Building')}</SelectItem>
+                          <SelectItem value="railway">{t('risk.advanced.options.type.railway', 'Railway')}</SelectItem>
+                          <SelectItem value="dam">{t('risk.advanced.options.type.dam', 'Dam')}</SelectItem>
+                          <SelectItem value="other">{t('risk.advanced.options.type.other', 'Other')}</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      {errors.type && (
+                        <p className="text-sm text-red-500">{errors.type.message}</p>
+                      )}
+                    </div>
+                  </div>
+                </form>
+              </CardContent>
+              <CardFooter className="bg-gray-50">
+                <Button type="submit" form="risk-form" disabled={isLoading}>
+                  {isLoading ? (
+                    <>
+                      <svg className="animate-spin -ml-1 mr-2 h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                      </svg>
+                      {t('risk.advanced.buttons.processing', 'Processing...')}
+                    </>
+                  ) : t('risk.advanced.buttons.analyze', 'Analyze Project Risk')}
+                </Button>
+              </CardFooter>
+            </Card>
+            
+            <Card className="border-t-4 border-blue-500 shadow-md hover:shadow-lg transition-shadow">
+              <CardHeader className="bg-gray-50">
+                <div className="flex items-center gap-2 mb-2">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-blue-800"><path d="m3 11 18-5"></path><path d="M12 12v9"></path><circle cx="12" cy="7" r="3"></circle></svg>
+                  <CardTitle className="text-blue-900">{translations.form.riskFactors}</CardTitle>
+                </div>
+                <CardDescription>{t('risk.advanced.riskFactorsDesc', 'Rate these risk factors based on your project characteristics')}</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <form className="space-y-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="terrain">{translations.form.fields.terrain}</Label>
+                    <Select defaultValue="medium" {...register('terrain')}>
+                      <SelectTrigger>
+                        <SelectValue placeholder={t('risk.advanced.placeholders.terrain', 'Select terrain complexity')} />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="low">{t('risk.advanced.options.complexity.low', 'Low complexity')}</SelectItem>
+                        <SelectItem value="medium">{t('risk.advanced.options.complexity.medium', 'Medium complexity')}</SelectItem>
+                        <SelectItem value="high">{t('risk.advanced.options.complexity.high', 'High complexity')}</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <Label htmlFor="weather">{translations.form.fields.weather}</Label>
+                    <Select defaultValue="moderate" {...register('weather')}>
+                      <SelectTrigger>
+                        <SelectValue placeholder={t('risk.advanced.placeholders.weather', 'Select weather conditions')} />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="mild">{t('risk.advanced.options.weather.mild', 'Mild (favorable)')}</SelectItem>
+                        <SelectItem value="moderate">{t('risk.advanced.options.weather.moderate', 'Moderate (seasonal challenges)')}</SelectItem>
+                        <SelectItem value="extreme">{t('risk.advanced.options.weather.extreme', 'Extreme (frequent disruptions)')}</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <Label htmlFor="laborAvailability">{translations.form.fields.laborAvailability}</Label>
+                    <Select defaultValue="adequate" {...register('laborAvailability')}>
+                      <SelectTrigger>
+                        <SelectValue placeholder={t('risk.advanced.placeholders.laborAvailability', 'Select labor availability')} />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="abundant">{t('risk.advanced.options.availability.abundant', 'Abundant')}</SelectItem>
+                        <SelectItem value="adequate">{t('risk.advanced.options.availability.adequate', 'Adequate')}</SelectItem>
+                        <SelectItem value="scarce">{t('risk.advanced.options.availability.scarce', 'Scarce')}</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <Label htmlFor="materialAccess">{translations.form.fields.materialAccess}</Label>
+                    <Select defaultValue="moderate" {...register('materialAccess')}>
+                      <SelectTrigger>
+                        <SelectValue placeholder={t('risk.advanced.placeholders.materialAccess', 'Select material access')} />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="easy">{t('risk.advanced.options.access.easy', 'Easy access')}</SelectItem>
+                        <SelectItem value="moderate">{t('risk.advanced.options.access.moderate', 'Moderate access')}</SelectItem>
+                        <SelectItem value="difficult">{t('risk.advanced.options.access.difficult', 'Difficult access')}</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <Label htmlFor="infrastructureStatus">{translations.form.fields.infrastructureStatus}</Label>
+                    <Select defaultValue="fair" {...register('infrastructureStatus')}>
+                      <SelectTrigger>
+                        <SelectValue placeholder={t('risk.advanced.placeholders.infrastructureStatus', 'Select infrastructure status')} />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="good">{t('risk.advanced.options.infrastructure.good', 'Good')}</SelectItem>
+                        <SelectItem value="fair">{t('risk.advanced.options.infrastructure.fair', 'Fair')}</SelectItem>
+                        <SelectItem value="poor">{t('risk.advanced.options.infrastructure.poor', 'Poor')}</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </form>
+              </CardContent>
+            </Card>
+          </div>
+          
+          <div className="lg:pl-4">
+            {riskAssessment ? (
+              <Tabs defaultValue="overview" className="w-full">
+                <TabsList className="grid grid-cols-3 mb-4">
+                  <TabsTrigger value="overview">{translations.results.tabs.overview}</TabsTrigger>
+                  <TabsTrigger value="details">{translations.results.tabs.details}</TabsTrigger>
+                  <TabsTrigger value="mitigation">{translations.results.tabs.mitigation}</TabsTrigger>
+                </TabsList>
+                <TabsContent value="overview" className="space-y-4">
+                  <Card className="border-t-4 border-blue-600">
+                    <CardHeader className="pb-2">
+                      <CardTitle className="text-xl text-center">
+                        {t('risk.advanced.results.overviewTitle', 'Project Risk Assessment')}
+                      </CardTitle>
+                      <CardDescription className="text-center font-medium">
+                        {riskAssessment.projectName}
+                      </CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="flex flex-col items-center mb-6">
+                        <RiskIndicator score={riskAssessment.overallScore} size="xl" />
+                        <p className="mt-4 text-center text-sm">
+                          {t('risk.advanced.results.overallDescription', 'Based on the factors analyzed, this project has an overall risk score of')}{' '}
+                          <span className="font-bold text-lg">{riskAssessment.overallScore}</span>
+                          {' '}{t('risk.advanced.results.outOf', 'out of 100')}
+                        </p>
+                      </div>
+                      
+                      <div className="space-y-4">
+                        <h4 className="font-medium text-gray-900">
+                          {t('risk.advanced.results.topRisks', 'Top Risk Factors')}:
+                        </h4>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                          {riskAssessment.factors
+                            .sort((a: any, b: any) => b.score - a.score)
+                            .slice(0, 4)
+                            .map((factor: any, index: number) => (
+                              <div key={index} className="flex items-center gap-3 bg-gray-50 p-3 rounded-lg">
+                                <RiskIndicator score={factor.score} size="sm" />
+                                <div>
+                                  <p className="font-medium">{factor.name}</p>
+                                  <p className="text-xs text-gray-600">
+                                    {t('risk.advanced.results.impactLevel', 'Impact Level')}: {factor.score >= 70 ? t('risk.advanced.results.levels.high', 'High') : factor.score >= 50 ? t('risk.advanced.results.levels.medium', 'Medium') : t('risk.advanced.results.levels.low', 'Low')}
+                                  </p>
+                                </div>
+                              </div>
+                            ))}
+                        </div>
+                      </div>
+                      
+                      <div className="mt-6">
+                        <h4 className="font-medium text-gray-900 mb-3">
+                          {t('risk.advanced.results.comparison', 'Comparison with Similar Projects')}:
+                        </h4>
+                        <div className="space-y-2">
+                          {riskAssessment.similarProjects.map((project: any, index: number) => (
+                            <ComparativeRisk
+                              key={index}
+                              projectName={project.name}
+                              score={project.score}
+                              currentProjectScore={riskAssessment.overallScore}
+                            />
+                          ))}
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </TabsContent>
+                
+                <TabsContent value="details">
+                  <Card>
+                    <CardHeader>
+                      <CardTitle>{t('risk.advanced.results.detailedAnalysis', 'Detailed Risk Analysis')}</CardTitle>
+                      <CardDescription>{t('risk.advanced.results.detailedDescription', 'Comprehensive breakdown of all risk factors and their potential impacts')}</CardDescription>
+                    </CardHeader>
+                    <CardContent className="space-y-6">
+                      {riskAssessment.factors.map((factor: any, index: number) => (
+                        <RiskFactorCard
+                          key={index}
+                          name={factor.name}
+                          score={factor.score}
+                          impact={factor.impact}
+                          mitigation={factor.mitigation}
+                        />
+                      ))}
+                    </CardContent>
+                  </Card>
+                </TabsContent>
+                
+                <TabsContent value="mitigation">
+                  <Card>
+                    <CardHeader>
+                      <CardTitle>{t('risk.advanced.results.mitigationTitle', 'Risk Mitigation Strategy')}</CardTitle>
+                      <CardDescription>{t('risk.advanced.results.mitigationDescription', 'Recommended actions to manage identified risks')}</CardDescription>
+                    </CardHeader>
+                    <CardContent className="space-y-6">
+                      <div className="bg-blue-50 border border-blue-100 rounded-lg p-4 mb-4">
+                        <p className="text-sm text-blue-800">
+                          {t('risk.advanced.results.mitigationNote', 'The following mitigation strategies are tailored based on the project profile and risk assessment results. Implement these recommendations to minimize potential impacts.')}
+                        </p>
+                      </div>
+                      
+                      {riskAssessment.mitigationStrategies.map((strategy: any, index: number) => (
+                        <div key={index} className="space-y-2">
+                          <h3 className="font-medium text-gray-900">{strategy.title}</h3>
+                          <ul className="space-y-1">
+                            {strategy.actions.map((action: string, actionIndex: number) => (
+                              <RiskMitigationItem key={actionIndex} text={action} />
+                            ))}
+                          </ul>
+                        </div>
+                      ))}
+                    </CardContent>
+                  </Card>
+                </TabsContent>
+              </Tabs>
+            ) : (
+              <Card className="h-full flex flex-col justify-center items-center p-6">
+                <div className="text-center space-y-4">
+                  <h3 className="text-xl font-bold">{t('risk.advanced.emptyState.title', 'Risk Assessment')}</h3>
+                  <p className="text-muted-foreground">
+                    {t('risk.advanced.emptyState.description', 'Fill out the project details form and submit to generate a comprehensive risk assessment.')}
+                  </p>
+                  <div className="flex items-center justify-center gap-2">
+                    <div className="h-3 w-3 rounded-full bg-red-500"></div>
+                    <span className="text-sm">{t('risk.advanced.results.levels.high', 'High Risk')}</span>
+                    <div className="h-3 w-3 rounded-full bg-yellow-500 ml-3"></div>
+                    <span className="text-sm">{t('risk.advanced.results.levels.medium', 'Medium Risk')}</span>
+                    <div className="h-3 w-3 rounded-full bg-green-500 ml-3"></div>
+                    <span className="text-sm">{t('risk.advanced.results.levels.low', 'Low Risk')}</span>
+                  </div>
+                </div>
+              </Card>
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}

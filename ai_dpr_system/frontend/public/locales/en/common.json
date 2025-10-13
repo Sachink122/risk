@@ -1,0 +1,97 @@
+{
+  "getStarted": "Get Started",
+  "learnMore": "Learn More",
+  "dashboard": "Dashboard",
+  "login": "Login",
+  "register": "Register",
+  "logout": "Logout",
+  "home": "Home",
+  "about": "About",
+  "contact": "Contact",
+  "settings": "Settings",
+  "profile": "Profile",
+  "language": "Language",
+  "theme": "Theme",
+  "loading": "Loading...",
+  "error": "An error occurred",
+  "success": "Success",
+  "cancel": "Cancel",
+  "save": "Save",
+  "delete": "Delete",
+  "edit": "Edit",
+  "submit": "Submit",
+  "next": "Next",
+  "previous": "Previous",
+  "changeLanguage": "Change language",
+  "currentLanguage": "Current language",
+  "languageChanged": "Language Changed",
+  "languageChangedMessage": "The website language has been changed successfully",
+  "languageChangeError": "Failed to change language. Please try again.",
+  "appTitle": "RiskGuard AI",
+  "Ministry of Development of North Eastern Region": "Ministry of Development of North Eastern Region",
+  "AI-Powered DPR Risk Assessment": "AI-Powered DPR Risk Assessment",
+  "Evaluate infrastructure project risks using advanced AI models for better planning and execution": "Evaluate infrastructure project risks using advanced AI models for better planning and execution",
+  "Go to Dashboard": "Go to Dashboard",
+  "Key Features": "Key Features",
+  "AI Risk Analysis": "AI Risk Analysis",
+  "Leverage machine learning to identify potential risks in infrastructure projects": "Leverage machine learning to identify potential risks in infrastructure projects",
+  "Detailed Reports": "Detailed Reports",
+  "Generate comprehensive risk assessment reports with mitigation strategies": "Generate comprehensive risk assessment reports with mitigation strategies",
+  "Multi-lingual Support": "Multi-lingual Support",
+  "Access the platform in English, Hindi, and Assamese languages": "Access the platform in English, Hindi, and Assamese languages",
+  "FAQs": "FAQs",
+  "User Manual": "User Manual",
+  "hero": {
+    "title": "AI-Powered Risk Assessment for Infrastructure Projects",
+    "subtitle": "Make data-driven decisions with our advanced risk prediction platform for DPR management"
+  },
+  "features": {
+    "title": "Powerful Features",
+    "subtitle": "Our system provides a comprehensive suite of tools to analyze and mitigate risks in infrastructure projects",
+    "feature1": {
+      "title": "Advanced Risk Analysis",
+      "description": "Utilize AI algorithms to identify potential risks before they impact your project"
+    },
+    "feature2": {
+      "title": "Predictive Modeling",
+      "description": "Forecast outcomes based on historical data and current project parameters"
+    },
+    "feature3": {
+      "title": "Interactive Dashboard",
+      "description": "Visualize risk data with intuitive charts and actionable insights"
+    },
+    "feature4": {
+      "title": "Document Management",
+      "description": "Securely store and analyze project documents with AI-assisted processing"
+    }
+  },
+  "workflow": {
+    "title": "How It Works",
+    "subtitle": "Our streamlined process makes risk assessment simple and effective",
+    "step1": {
+      "title": "Upload Project Data",
+      "description": "Upload your DPR documents and project details to our secure platform"
+    },
+    "step2": {
+      "title": "AI Analysis",
+      "description": "Our algorithms analyze your data to identify potential risk factors"
+    },
+    "step3": {
+      "title": "Review Insights",
+      "description": "Examine detailed risk assessments and recommendations"
+    },
+    "step4": {
+      "title": "Implement Solutions",
+      "description": "Apply suggested mitigation strategies to reduce project risks"
+    }
+  },
+  "testimonials": {
+    "title": "Success Stories",
+    "subtitle": "See how our platform is transforming infrastructure planning"
+  },
+  "footer": {
+    "copyright": "© 2025 DPR AI Risk Prediction. All rights reserved.",
+    "privacyPolicy": "Privacy Policy",
+    "termsOfService": "Terms of Service"
+  }
+}

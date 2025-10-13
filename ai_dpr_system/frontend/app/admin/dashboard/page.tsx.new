@@ -1,0 +1,122 @@
+'use client'
+
+import React from 'react'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { useAuth } from '@/lib/auth/auth-provider'
+import { useTranslation } from 'react-i18next'
+import { BarChart, Users, FileText, AlertCircle } from 'lucide-react'
+
+export default function AdminDashboardPage() {
+  const { t } = useTranslation()
+  const { user } = useAuth()
+
+  // Mock data for dashboard
+  const stats = [
+    {
+      name: t('Total Users'),
+      value: '24',
+      icon: Users,
+      color: 'text-blue-600',
+      bgColor: 'bg-blue-100',
+    },
+    {
+      name: t('Total DPRs'),
+      value: '42',
+      icon: FileText,
+      color: 'text-green-600',
+      bgColor: 'bg-green-100',
+    },
+    {
+      name: t('High Risk DPRs'),
+      value: '8',
+      icon: AlertCircle,
+      color: 'text-red-600',
+      bgColor: 'bg-red-100',
+    },
+    {
+      name: t('Reports Generated'),
+      value: '18',
+      icon: BarChart,
+      color: 'text-purple-600',
+      bgColor: 'bg-purple-100',
+    },
+  ]
+
+  return (
+    <>
+      <div className="flex items-center mb-6">
+        <h1 className="text-2xl font-bold tracking-tight">{t('Welcome, Admin!')}</h1>
+      </div>
+      
+      <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
+        {stats.map((stat) => (
+          <Card key={stat.name}>
+            <CardHeader className="flex flex-row items-center justify-between pb-2">
+              <CardTitle className="text-sm font-medium">
+                {stat.name}
+              </CardTitle>
+              <div className={`${stat.bgColor} p-2 rounded-full`}>
+                <stat.icon className={`h-5 w-5 ${stat.color}`} />
+              </div>
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">{stat.value}</div>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
+      
+      <div className="grid gap-6 grid-cols-1 lg:grid-cols-2 mt-6">
+        <Card>
+          <CardHeader>
+            <CardTitle>{t('Recent Activity')}</CardTitle>
+            <CardDescription>{t('Latest activity across the platform')}</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4">
+              <div className="border-b pb-2">
+                <p className="text-sm text-gray-500">{t('Today')}</p>
+                <p className="mt-1">User Rahul S. uploaded a new DPR</p>
+              </div>
+              <div className="border-b pb-2">
+                <p className="text-sm text-gray-500">{t('Yesterday')}</p>
+                <p className="mt-1">3 new risk assessments completed</p>
+              </div>
+              <div>
+                <p className="text-sm text-gray-500">{t('Last Week')}</p>
+                <p className="mt-1">System update completed successfully</p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+        
+        <Card>
+          <CardHeader>
+            <CardTitle>{t('System Status')}</CardTitle>
+            <CardDescription>{t('Current system performance metrics')}</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4">
+              <div className="flex justify-between">
+                <span>{t('Backend API')}</span>
+                <span className="text-green-600 font-medium">{t('Operational')}</span>
+              </div>
+              <div className="flex justify-between">
+                <span>{t('ML Services')}</span>
+                <span className="text-green-600 font-medium">{t('Operational')}</span>
+              </div>
+              <div className="flex justify-between">
+                <span>{t('Database')}</span>
+                <span className="text-green-600 font-medium">{t('Operational')}</span>
+              </div>
+              <div className="flex justify-between">
+                <span>{t('Storage')}</span>
+                <span className="text-green-600 font-medium">{t('Operational')}</span>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    </>
+  )
+}
