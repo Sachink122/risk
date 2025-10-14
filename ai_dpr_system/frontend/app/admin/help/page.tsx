@@ -201,7 +201,8 @@ export default function HelpSupportPage() {
             <CardContent className="space-y-6">
               <div className="space-y-4">
                 <div className="space-y-2">
-                  <h3 className="font-medium">{t('How do I reset a user's password?')}</h3>
+                  <h3 className="font-medium">{t('How do I reset a users password?')}
+                  </h3>
                   <p className="text-sm text-muted-foreground">
                     {t('Navigate to the Users section, find the user, and click on the "Reset Password" option. You can either set a temporary password or send them an email with a password reset link.')}
                   </p>
@@ -237,7 +238,7 @@ export default function HelpSupportPage() {
               </div>
               
               <div className="bg-muted p-4 rounded-lg">
-                <h4 className="font-medium">{t('Didn't find what you're looking for?')}</h4>
+                <h4 className="font-medium">{t('Didnt find what youre looking for?')}</h4>
                 <p className="text-sm text-muted-foreground mt-1">
                   {t('Check our comprehensive documentation or contact support for personalized assistance.')}
                 </p>
