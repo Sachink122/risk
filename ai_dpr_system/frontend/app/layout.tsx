@@ -17,12 +17,15 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <LangAttribute>
+    <html lang="en" dir="ltr" suppressHydrationWarning>
       <body className={inter.className}>
         <Providers>
-          {children}
+          {/* Update <html> lang/dir attributes on the client without rendering them here */}
+          <LangAttribute>
+            {children}
+          </LangAttribute>
         </Providers>
       </body>
-    </LangAttribute>
+    </html>
   )
 }

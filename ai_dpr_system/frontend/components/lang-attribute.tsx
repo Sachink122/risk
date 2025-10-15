@@ -1,5 +1,6 @@
 'use client'
 
+import { useEffect } from 'react'
 import { useLangAttribute } from '@/lib/hooks/use-lang-attribute'
 
 export default function LangAttribute({
@@ -7,12 +8,15 @@ export default function LangAttribute({
 }: {
   children: React.ReactNode
 }) {
-  // Use the custom hook for language attribute management
   const lang = useLangAttribute()
 
-  return (
-    <html lang={lang} dir={lang === 'ar' ? 'rtl' : 'ltr'} suppressHydrationWarning>
-      {children}
-    </html>
-  )
+  useEffect(() => {
+    if (typeof document !== 'undefined') {
+      const html = document.documentElement
+      html.setAttribute('lang', lang)
+      html.setAttribute('dir', lang === 'ar' ? 'rtl' : 'ltr')
+    }
+  }, [lang])
+
+  return children as React.ReactElement
 }
