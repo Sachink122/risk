@@ -137,11 +137,12 @@ export default function AdminDashboardPage() {
       let dprCount = 0;
       let highRiskDprCount = 0;
       try {
-        const dprs = JSON.parse(localStorage.getItem('uploaded-dprs') || '[]');
+        type DprItem = { id?: string; title?: string; description?: string; riskScore?: number }
+        const dprs: DprItem[] = JSON.parse(localStorage.getItem('uploaded-dprs') || '[]');
         dprCount = dprs.length;
         
         // Count high risk DPRs (risk score > 0.7)
-        highRiskDprCount = dprs.filter(dpr => dpr.riskScore && dpr.riskScore > 0.7).length;
+        highRiskDprCount = dprs.filter((dpr: DprItem) => typeof dpr.riskScore === 'number' && dpr.riskScore > 0.7).length;
       } catch (e) {
         console.error('Error counting DPRs:', e);
       }
@@ -428,8 +429,9 @@ export default function AdminDashboardPage() {
                   }
                   
                   // Group activities by date
-                  const groupedActivities = {};
-                  for (const activity of activities) {
+                  type Activity = { date: string; text: string; time?: string; user?: any }
+                  const groupedActivities: Record<string, string[]> = {};
+                  for (const activity of activities as Activity[]) {
                     if (!groupedActivities[activity.date]) {
                       groupedActivities[activity.date] = [];
                     }
@@ -476,7 +478,7 @@ export default function AdminDashboardPage() {
                   const threshold = 24 * 60 * 60 * 1000;
                   
                   // Determine status based on last operation time
-                  const getStatus = (lastCheckTime) => {
+                  const getStatus = (lastCheckTime: string | null) => {
                     if (!lastCheckTime) return { status: 'Unknown', color: 'text-gray-500', bgColor: 'bg-gray-100' };
                     
                     try {

@@ -68,6 +68,9 @@ interface UserActivity {
   location?: string
 }
 
+// Minimal user shape used across this page
+type UserItem = { id: string; name: string; email: string; avatar?: string; status: 'active' | 'inactive' };
+
 export default function UserMonitoringPage() {
   // State for user activities
   const [activities, setActivities] = useState<UserActivity[]>([])
@@ -82,7 +85,7 @@ export default function UserMonitoringPage() {
   const [newActivities, setNewActivities] = useState<any[]>([])
   
   // Mock user data
-  const [users, setUsers] = useState<{id: string, name: string, email: string, avatar?: string, status: 'active' | 'inactive'}[]>([])
+  const [users, setUsers] = useState<UserItem[]>([])
   
   // Get user data and activities
   useEffect(() => {
@@ -92,7 +95,7 @@ export default function UserMonitoringPage() {
       try {
         // Get users from localStorage
         const registeredUsers = JSON.parse(localStorage.getItem('registered-users') || '[]')
-        const mappedUsers = registeredUsers.map((user: any) => ({
+        const mappedUsers: UserItem[] = registeredUsers.map((user: any): UserItem => ({
           id: user.id || Math.random().toString(36).substr(2, 9),
           name: user.full_name || 'Unknown User',
           email: user.email || '',
@@ -113,7 +116,7 @@ export default function UserMonitoringPage() {
         // For new users with no activities, create initial login activities
         if (userActivities.length === 0 && mappedUsers.length > 0) {
           // If no activities found, create at least login activities for each user
-          const initialActivities = mappedUsers.map(user => {
+          const initialActivities = mappedUsers.map((user: UserItem) => {
             const loginDate = new Date()
             loginDate.setHours(loginDate.getHours() - Math.floor(Math.random() * 24))
             
@@ -255,7 +258,7 @@ export default function UserMonitoringPage() {
   }
   
   // Function to create a new activity and add it to storage using our utility
-  const recordUserActivity = (user: any, activityType: ActivityType, resource?: string, status: 'success' | 'warning' | 'error' = 'success') => {
+  const recordUserActivity = (user: UserItem, activityType: ActivityType, resource?: string, status: 'success' | 'warning' | 'error' = 'success') => {
     const module = getModuleForActivityType(activityType)
     const userName = user.name || 'Unknown User'
     const details = resource ? `${resource}` : ''
@@ -593,7 +596,7 @@ export default function UserMonitoringPage() {
                         <TableHead className="w-[30px]">
                           <Checkbox 
                             checked={selectedActivities.length === filteredActivities.length && filteredActivities.length > 0}
-                            onCheckedChange={toggleSelectAll}
+                            onChange={() => toggleSelectAll()}
                           />
                         </TableHead>
                         <TableHead className="w-[200px]">User</TableHead>
@@ -619,7 +622,7 @@ export default function UserMonitoringPage() {
                             <TableCell>
                               <Checkbox 
                                 checked={selectedActivities.includes(activity.id)}
-                                onCheckedChange={() => toggleSelectActivity(activity.id)}
+                                onChange={() => toggleSelectActivity(activity.id)}
                               />
                             </TableCell>
                             <TableCell>

@@ -6,8 +6,29 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { useToast } from '@/components/ui/use-toast'
 
+type RiskFactor = {
+  category: string;
+  score: number;
+  description: string;
+  probability: 'High' | 'Medium' | 'Low';
+  impact: 'High' | 'Medium' | 'Low';
+  mitigation: string;
+  keyIndicators: string[];
+};
+
+type RiskAnalysis = {
+  id: string | number;
+  projectTitle: string;
+  projectCode: string;
+  overallRiskScore: number;
+  riskLevel: 'Low' | 'Medium' | 'High' | string;
+  summary: string;
+  riskFactors: RiskFactor[];
+  recommendations: string[];
+};
+
 export default function RiskAnalysis({ params }: { params: { id: string } }) {
-  const [riskAnalysis, setRiskAnalysis] = useState<any>(null)
+  const [riskAnalysis, setRiskAnalysis] = useState<RiskAnalysis | null>(null)
   const [loading, setLoading] = useState(true)
   const router = useRouter()
   const { toast } = useToast()
@@ -20,7 +41,7 @@ export default function RiskAnalysis({ params }: { params: { id: string } }) {
       
       if (dpr && dpr.status === 'Evaluated') {
         // Generate risk analysis data based on the DPR's risk level
-        const analysis = {
+        const analysis: RiskAnalysis = {
           id: dpr.id,
           projectTitle: dpr.title,
           projectCode: dpr.projectCode,

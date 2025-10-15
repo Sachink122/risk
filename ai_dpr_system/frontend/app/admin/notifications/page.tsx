@@ -8,7 +8,6 @@ import { Badge } from '@/components/ui/badge'
 import { 
   Table, 
   TableBody, 
-  TableCaption, 
   TableCell, 
   TableHead, 
   TableHeader, 

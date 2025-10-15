@@ -437,7 +437,7 @@ Generated from Ministry of Development of North Eastern Region DPR Management Sy
                 <div>
                   <h4 className="text-sm font-medium text-slate-500 mb-4">AI Comments</h4>
                   <div className="space-y-4">
-                    {dpr.evaluation.comments.map((comment, index) => (
+                    {dpr.evaluation.comments.map((comment: { section: string; comment: string; severity: 'High' | 'Medium' | 'Low' }, index: number) => (
                       <div key={index} className="bg-white dark:bg-slate-900 p-4 rounded-lg shadow-sm">
                         <div className="flex justify-between items-center">
                           <div className="text-sm font-medium">{comment.section}</div>

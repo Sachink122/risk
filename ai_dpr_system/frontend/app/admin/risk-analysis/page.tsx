@@ -12,9 +12,20 @@ import { useTranslation } from 'react-i18next';
 import { AdminIcons } from '@/components/admin-icons';
 import { AlertTriangle, ChevronDown, Search, AlertCircle, CheckCircle, AlertOctagon, BarChart, ArrowRight, Eye } from 'lucide-react';
 
+// Minimal shape of a DPR item used in this page
+type DprItem = {
+  id: string;
+  title: string;
+  uploaderName?: string;
+  uploadDate: string;
+  riskScore: number;
+  status: 'Critical' | 'Flagged' | 'Under Review' | 'Approved' | string;
+  riskFactors?: string[];
+};
+
 export default function AdminRiskAnalysisPage() {
   const { t } = useTranslation();
-  const [highRiskDprs, setHighRiskDprs] = React.useState<any[]>([]);
+  const [highRiskDprs, setHighRiskDprs] = React.useState<DprItem[]>([]);
   const [searchTerm, setSearchTerm] = React.useState('');
   const [sortBy, setSortBy] = React.useState('risk-desc');
   const [riskThreshold, setRiskThreshold] = React.useState<string>('0.7');
@@ -24,11 +35,21 @@ export default function AdminRiskAnalysisPage() {
     try {
       const savedDprs = localStorage.getItem('uploaded-dprs');
       if (savedDprs) {
-        const parsedDprs = JSON.parse(savedDprs);
+        const parsed = JSON.parse(savedDprs) as unknown;
+        const arr = Array.isArray(parsed) ? parsed : [];
+        // Normalize items to DprItem shape with numeric riskScore
+        const normalized: DprItem[] = arr.map((item: any): DprItem => ({
+          id: String(item?.id ?? ''),
+          title: String(item?.title ?? ''),
+          uploaderName: item?.uploaderName ? String(item.uploaderName) : undefined,
+          uploadDate: String(item?.uploadDate ?? new Date().toISOString()),
+          riskScore: typeof item?.riskScore === 'number' ? item.riskScore : parseFloat(String(item?.riskScore ?? '0')),
+          status: item?.status ? String(item.status) : 'Under Review',
+          riskFactors: Array.isArray(item?.riskFactors) ? item.riskFactors.map((f: any) => String(f)) : [],
+        }));
         // Filter high risk DPRs (risk score > threshold)
-        setHighRiskDprs(parsedDprs.filter(dpr => 
-          dpr.riskScore && parseFloat(dpr.riskScore) > parseFloat(riskThreshold)
-        ));
+        const threshold = parseFloat(riskThreshold);
+        setHighRiskDprs(normalized.filter((dpr: DprItem) => dpr.riskScore > threshold));
       } else {
         // No DPRs found, initialize with empty arrays
         setHighRiskDprs([]);
@@ -41,11 +62,11 @@ export default function AdminRiskAnalysisPage() {
   }, [riskThreshold]);
 
   const filteredDprs = React.useMemo(() => {
-    let filtered = [...highRiskDprs];
+    let filtered: DprItem[] = [...highRiskDprs];
     
     // Apply search filter
     if (searchTerm) {
-      filtered = filtered.filter(dpr => 
+      filtered = filtered.filter((dpr: DprItem) => 
         dpr.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
         dpr.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
         (dpr.uploaderName && dpr.uploaderName.toLowerCase().includes(searchTerm.toLowerCase()))
@@ -55,16 +76,16 @@ export default function AdminRiskAnalysisPage() {
     // Apply sorting
     switch (sortBy) {
       case 'risk-desc':
-        filtered.sort((a, b) => b.riskScore - a.riskScore);
+        filtered.sort((a: DprItem, b: DprItem) => b.riskScore - a.riskScore);
         break;
       case 'risk-asc':
-        filtered.sort((a, b) => a.riskScore - b.riskScore);
+        filtered.sort((a: DprItem, b: DprItem) => a.riskScore - b.riskScore);
         break;
       case 'date-desc':
-        filtered.sort((a, b) => new Date(b.uploadDate).getTime() - new Date(a.uploadDate).getTime());
+        filtered.sort((a: DprItem, b: DprItem) => new Date(b.uploadDate).getTime() - new Date(a.uploadDate).getTime());
         break;
       case 'date-asc':
-        filtered.sort((a, b) => new Date(a.uploadDate).getTime() - new Date(b.uploadDate).getTime());
+        filtered.sort((a: DprItem, b: DprItem) => new Date(a.uploadDate).getTime() - new Date(b.uploadDate).getTime());
         break;
     }
     
@@ -121,9 +142,9 @@ export default function AdminRiskAnalysisPage() {
 
   // Calculate statistics for the dashboard
   const stats = React.useMemo(() => {
-    const criticalCount = highRiskDprs.filter(dpr => dpr.riskScore >= 0.9).length;
-    const highCount = highRiskDprs.filter(dpr => dpr.riskScore >= 0.8 && dpr.riskScore < 0.9).length;
-    const moderateCount = highRiskDprs.filter(dpr => dpr.riskScore >= 0.7 && dpr.riskScore < 0.8).length;
+  const criticalCount = highRiskDprs.filter((dpr: DprItem) => dpr.riskScore >= 0.9).length;
+  const highCount = highRiskDprs.filter((dpr: DprItem) => dpr.riskScore >= 0.8 && dpr.riskScore < 0.9).length;
+  const moderateCount = highRiskDprs.filter((dpr: DprItem) => dpr.riskScore >= 0.7 && dpr.riskScore < 0.8).length;
     
     return {
       critical: criticalCount,

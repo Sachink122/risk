@@ -264,7 +264,7 @@ export default function ExportReportsPage() {
             <Checkbox 
               id="selectAll"
               checked={filteredReports.length > 0 && selectedReports.length === filteredReports.length}
-              onCheckedChange={toggleSelectAll}
+              onChange={() => toggleSelectAll()}
             />
             <Label htmlFor="selectAll">Select All</Label>
           </div>
@@ -298,7 +298,7 @@ export default function ExportReportsPage() {
                   <Checkbox 
                     id={`report-${report.id}`}
                     checked={selectedReports.includes(report.id)}
-                    onCheckedChange={() => toggleReportSelection(report.id)}
+                    onChange={() => toggleReportSelection(report.id)}
                   />
                   
                   <div className="flex-1 grid grid-cols-1 md:grid-cols-5 gap-2 items-center">

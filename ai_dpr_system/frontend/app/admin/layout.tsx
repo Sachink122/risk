@@ -14,7 +14,9 @@ import { Search, Bell, Menu, X, ChevronRight } from 'lucide-react'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
-import { AdminNotification, markAllNotificationsAsRead } from '@/lib/admin/notifications'
+import { markAllNotificationsAsRead } from '@/lib/admin/notifications'
+// Local notification type used in this layout
+type NotificationItem = { id: number; text: string; time: string; read: boolean }
 
 export default function AdminLayout({
   children,
@@ -27,7 +29,7 @@ export default function AdminLayout({
   const pathname = usePathname()
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
-  const [notifications, setNotifications] = useState<AdminNotification[]>([])
+  const [notifications, setNotifications] = useState<NotificationItem[]>([])
   const [notificationsOpen, setNotificationsOpen] = useState(false)
   const [status, setStatus] = useState({
     isChecking: true,
@@ -43,7 +45,7 @@ export default function AdminLayout({
         if (typeof window !== 'undefined') {
           const savedNotifications = localStorage.getItem('admin-notifications')
           if (savedNotifications) {
-            const parsedNotifications = JSON.parse(savedNotifications)
+            const parsedNotifications: NotificationItem[] = JSON.parse(savedNotifications)
             setNotifications(parsedNotifications)
           }
         }
@@ -288,7 +290,7 @@ export default function AdminLayout({
                         </div>
                       </div>
                       <div className="max-h-72 overflow-y-auto">
-                        {notifications.map(notification => (
+                        {notifications.map((notification: NotificationItem) => (
                           <div 
                             key={notification.id} 
                             className={`px-4 py-3 hover:bg-gray-50 dark:hover:bg-gray-700 border-b dark:border-gray-700 last:border-0 ${notification.read ? 'opacity-70' : ''}`}

@@ -293,8 +293,10 @@ export default function AdminUsersPage() {
 
   // Handle toggling user status
   const toggleUserStatus = (id: number) => {
-    const updatedUsers = users.map(u => 
-      u.id === id ? { ...u, status: u.status === 'Active' ? 'Inactive' : 'Active' } : u
+    const updatedUsers: User[] = users.map((u): User =>
+      u.id === id
+        ? { ...u, status: u.status === 'Active' ? ('Inactive' as const) : ('Active' as const) }
+        : u
     );
     setUsers(updatedUsers);
     

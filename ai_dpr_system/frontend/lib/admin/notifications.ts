@@ -1,14 +1,53 @@
+
 'use client'
 
-// This utility function helps with notifications management
-// throughout the admin panel
+// Notifications utilities used throughout the admin panel
 
-// Define notification type
+// Define normalized notification type used by UI components
 export interface AdminNotification {
   id: number
-  text: string
-  time: string
+  title: string
+  description: string
+  timestamp: string // ISO string
+  priority: 'low' | 'medium' | 'high' | 'critical'
+  type: 'system' | 'risk' | 'user'
   read: boolean
+}
+
+// Back-compat normalizer for older stored items (with keys: text, time)
+function normalizeNotification(raw: any): AdminNotification {
+  const nowIso = new Date().toISOString()
+  return {
+    id: typeof raw?.id === 'number' ? raw.id : Number(raw?.id) || Date.now(),
+    title: typeof raw?.title === 'string' && raw.title.length > 0 ? raw.title : 'Notification',
+    description: typeof raw?.description === 'string' ? raw.description : (typeof raw?.text === 'string' ? raw.text : ''),
+    timestamp: typeof raw?.timestamp === 'string' && !Number.isNaN(Date.parse(raw.timestamp))
+      ? raw.timestamp
+      : (typeof raw?.time === 'string' && !Number.isNaN(Date.parse(raw.time)) ? new Date(raw.time).toISOString() : nowIso),
+    priority: (['low','medium','high','critical'] as const).includes(raw?.priority)
+      ? raw.priority
+      : 'low',
+    type: (['system','risk','user'] as const).includes(raw?.type)
+      ? raw.type
+      : 'system',
+    read: Boolean(raw?.read)
+  }
+}
+
+function readStored(): AdminNotification[] {
+  const str = localStorage.getItem('admin-notifications') || '[]'
+  try {
+    const arr = JSON.parse(str)
+    if (!Array.isArray(arr)) return []
+    return arr.map(normalizeNotification)
+  } catch (e) {
+    console.error('Error parsing notifications:', e)
+    return []
+  }
+}
+
+function writeStored(items: AdminNotification[]) {
+  localStorage.setItem('admin-notifications', JSON.stringify(items))
 }
 
 /**
@@ -17,36 +56,24 @@ export interface AdminNotification {
  * @returns The newly created notification object
  */
 export function addAdminNotification(text: string): AdminNotification {
-  // Get existing notifications
-  const existingNotificationsStr = localStorage.getItem('admin-notifications') || '[]'
-  let notifications: AdminNotification[] = []
-  
-  try {
-    notifications = JSON.parse(existingNotificationsStr)
-  } catch (e) {
-    console.error('Error parsing notifications:', e)
-    notifications = []
-  }
-  
-  // Create a new notification
+  const notifications = readStored()
+  // Create a new normalized notification
   const newNotification: AdminNotification = {
-    id: Date.now(), // Use timestamp as unique ID
-    text,
-    time: getRelativeTimeString(new Date()),
-    read: false
+    id: Date.now(),
+    title: 'System Update',
+    description: text,
+    timestamp: new Date().toISOString(),
+    priority: 'low',
+    type: 'system',
+    read: false,
   }
-  
   // Add to beginning of array (newest first)
   notifications.unshift(newNotification)
-  
   // Keep only the latest 50 notifications to prevent storage issues
   if (notifications.length > 50) {
-    notifications = notifications.slice(0, 50)
+    notifications.splice(50)
   }
-  
-  // Save back to localStorage
-  localStorage.setItem('admin-notifications', JSON.stringify(notifications))
-  
+  writeStored(notifications)
   return newNotification
 }
 
@@ -54,23 +81,8 @@ export function addAdminNotification(text: string): AdminNotification {
  * Mark all notifications as read
  */
 export function markAllNotificationsAsRead(): void {
-  const existingNotificationsStr = localStorage.getItem('admin-notifications') || '[]'
-  let notifications: AdminNotification[] = []
-  
-  try {
-    notifications = JSON.parse(existingNotificationsStr)
-    
-    // Mark all as read
-    notifications = notifications.map(notif => ({
-      ...notif,
-      read: true
-    }))
-    
-    // Save back to localStorage
-    localStorage.setItem('admin-notifications', JSON.stringify(notifications))
-  } catch (e) {
-    console.error('Error marking notifications as read:', e)
-  }
+  const notifications = readStored().map(n => ({ ...n, read: true }))
+  writeStored(notifications)
 }
 
 /**
@@ -78,28 +90,8 @@ export function markAllNotificationsAsRead(): void {
  * @param id The ID of the notification to mark as read
  */
 export function markNotificationAsRead(id: number): void {
-  const existingNotificationsStr = localStorage.getItem('admin-notifications') || '[]'
-  let notifications: AdminNotification[] = []
-  
-  try {
-    notifications = JSON.parse(existingNotificationsStr)
-    
-    // Find and mark the specific notification
-    notifications = notifications.map(notif => {
-      if (notif.id === id) {
-        return {
-          ...notif,
-          read: true
-        }
-      }
-      return notif
-    })
-    
-    // Save back to localStorage
-    localStorage.setItem('admin-notifications', JSON.stringify(notifications))
-  } catch (e) {
-    console.error('Error marking notification as read:', e)
-  }
+  const notifications = readStored().map(n => n.id === id ? { ...n, read: true } : n)
+  writeStored(notifications)
 }
 
 /**
@@ -112,36 +104,23 @@ export function markNotificationAsRead(id: number): void {
  * @param id The ID of the notification to delete
  */
 export function deleteNotification(id: number): void {
-  try {
-    const existingNotificationsStr = localStorage.getItem('admin-notifications') || '[]'
-    let notifications = JSON.parse(existingNotificationsStr)
-    
-    // Filter out the notification to delete
-    notifications = notifications.filter((notif: AdminNotification) => notif.id !== id)
-    
-    // Save back to localStorage
-    localStorage.setItem('admin-notifications', JSON.stringify(notifications))
-  } catch (e) {
-    console.error('Error deleting notification:', e)
-  }
+  const notifications = readStored().filter(n => n.id !== id)
+  writeStored(notifications)
 }
 
 /**
  * Delete all read notifications
  */
 export function deleteReadNotifications(): void {
-  try {
-    const existingNotificationsStr = localStorage.getItem('admin-notifications') || '[]'
-    let notifications = JSON.parse(existingNotificationsStr)
-    
-    // Filter out read notifications
-    notifications = notifications.filter((notif: AdminNotification) => !notif.read)
-    
-    // Save back to localStorage
-    localStorage.setItem('admin-notifications', JSON.stringify(notifications))
-  } catch (e) {
-    console.error('Error deleting read notifications:', e)
-  }
+  const notifications = readStored().filter(n => !n.read)
+  writeStored(notifications)
+}
+
+/**
+ * Fetch all admin notifications (normalized)
+ */
+export function getAllNotifications(): AdminNotification[] {
+  return readStored()
 }
 
 function getRelativeTimeString(date: Date): string {
